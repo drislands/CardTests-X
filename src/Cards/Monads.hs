@@ -1,6 +1,7 @@
 module Cards.Monads where
 
 import Cards.Types
+import Cards.Logic
 import Control.Monad.State
 
 import System.Random (StdGen, randomR)
@@ -14,10 +15,6 @@ data CardState  = CardState
 type CardMonad a = State CardState a
 
 
-shuffle' :: [Int] -> [a] -> [a]
-shuffle' (i:is) xs = 
-    let (front, back) = splitAt (i `mod` length xs) xs
-    in  (head back) : shuffle' is (front ++ tail back)
 
 shuffleDeck :: CardMonad ()
 shuffleDeck = do
@@ -35,10 +32,3 @@ rollInt range = do
     let (val,nextGen) = randomR range (stateGen s)
     put s { stateGen = nextGen }
     return val
-
-shuffleDeck' :: [Int] -> Deck -> Deck
-shuffleDeck' [] xs = xs
-shuffleDeck' _ [] = []
-shuffleDeck' (i:is) xs =
-    let (front,back) = splitAt (i `mod` length xs) xs
-    in  (head back) : shuffleDeck' is (front ++ tail back)
