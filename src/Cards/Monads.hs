@@ -25,10 +25,22 @@ shuffleDeck = do
     let newDeck = shuffleDeck' randomOrder deck
     put s { stateDeck = newDeck }
     
-
 rollInt :: (Int, Int) -> CardMonad Int
 rollInt range = do
     s <- get
     let (val,nextGen) = randomR range (stateGen s)
     put s { stateGen = nextGen }
     return val
+
+drawOne :: CardMonad Card
+drawOne = do
+    s <- get
+    let deck = stateDeck s
+        (result:rest) = deck
+    put s { stateDeck = rest }
+    return result
+
+draw :: Int -> CardMonad [Card]
+draw n
+    | n < 1 = return []
+    | otherwise = replicateM n drawOne

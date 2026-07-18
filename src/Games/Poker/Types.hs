@@ -12,5 +12,5 @@ data Hand = RoyalFlush          --
     | TwoPair Value Value Value -- High Pair, low Pair, 5th Card
     | Pair Value [Value]        -- Pair, then remaining Cards
     | HighCard [Value]          -- All five cards
-    deriving (Eq, Ord)
+    deriving (Eq, Ord, Show)
 
