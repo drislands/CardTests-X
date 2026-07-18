@@ -4,8 +4,8 @@ import Cards.Logic
 import Cards.Types
 import Cards.Monads
 
-import Games.Poker.Types
-import Games.Poker.Logic
+import qualified Games.Poker.Logic as Poker
+import qualified Games.Blackjack.Logic as Blackjack
 
 import Data.Maybe (mapMaybe)
 import Control.Monad.State
@@ -22,11 +22,11 @@ main = do
         drawAction = do
             shuffleDeck
             draw 5
-    
+
     let (hand1,newState) = runState drawAction cardState
-        result1 = translateHand hand1
+        result1 = Poker.translateHand hand1
         hand2 = evalState drawAction newState
-        result2 = translateHand hand2
+        result2 = Poker.translateHand hand2
 
     putStrLn "Hand 1:"
     print hand1
@@ -46,7 +46,7 @@ testSpecificHands = do
     let flushHand = mapMaybe easyConvert ["AS","KS","QS","JS","TS"]
         fhHand    = mapMaybe easyConvert ["3S","3C","3D","2D","2H"]
         hand   = flushHand
-        result = translateHand hand
+        result = Poker.translateHand hand
     print hand
     print result
 

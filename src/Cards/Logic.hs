@@ -12,6 +12,11 @@ freshDeck =
             let values = [minBound .. maxBound] :: [Value]
             in foldl (\c v -> Card { suit = newSuit, value = v } : c ) cards values
 
+freshDecks :: Int -> Deck
+freshDecks n 
+    | n < 1 = []
+    | otherwise = freshDeck ++ freshDecks (n - 1)
+
 shuffleDeck' :: [Int] -> Deck -> Deck
 shuffleDeck' [] xs = xs
 shuffleDeck' _ [] = []
