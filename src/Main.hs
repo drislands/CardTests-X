@@ -23,11 +23,22 @@ main = do
             shuffleDeck
             draw 5
     
-    let hand = evalState drawAction cardState
-        result = translateHand hand
+    let (hand1,newState) = runState drawAction cardState
+        result1 = translateHand hand1
+        hand2 = evalState drawAction newState
+        result2 = translateHand hand2
     
-    putStrLn $ show hand
-    putStrLn $ show result
+    putStrLn "Hand 1:"
+    putStrLn $ show hand1
+    putStrLn $ show result1
+    putStrLn "========================"
+    putStrLn "Hand 2:"
+    putStrLn $ show hand2
+    putStrLn $ show result2
+    putStrLn "========================"
+    putStrLn "Who wins?"
+    if result1 > result2 then putStrLn "Hand 1 wins"
+    else putStrLn "Hand 2 wins"
 
 
 getShuffledDeck :: IO Deck
@@ -51,10 +62,7 @@ testSpecificHands = do
     putStrLn $ show result
 
 easyConvert :: String -> Maybe Card
-easyConvert [] = Nothing
-easyConvert (_:[]) = Nothing
-easyConvert (_:_:_:_) = Nothing
-easyConvert (val:st:[]) = do
+easyConvert [val,st] = do
         goodVal  <- getVal val
         goodSuit <- getSuit st
         return $ Card { value = goodVal, suit = goodSuit}
@@ -74,3 +82,4 @@ easyConvert (val:st:[]) = do
             'C' -> return Clubs
             'D' -> return Diamonds
             _ -> Nothing
+easyConvert _ = Nothing
