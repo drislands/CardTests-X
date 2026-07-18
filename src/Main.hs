@@ -27,30 +27,19 @@ main = do
         result1 = translateHand hand1
         hand2 = evalState drawAction newState
         result2 = translateHand hand2
-    
+
     putStrLn "Hand 1:"
-    putStrLn $ show hand1
-    putStrLn $ show result1
+    print hand1
+    print result1
     putStrLn "========================"
     putStrLn "Hand 2:"
-    putStrLn $ show hand2
-    putStrLn $ show result2
+    print hand2
+    print result2
     putStrLn "========================"
     putStrLn "Who wins?"
     if result1 > result2 then putStrLn "Hand 1 wins"
     else putStrLn "Hand 2 wins"
 
-
-getShuffledDeck :: IO Deck
-getShuffledDeck = do
-    let fresh = freshDeck
-
-    systemGen <- newStdGen
-    let cardState = CardState { stateGen = systemGen, stateDeck = fresh }
-        shuffleAction = shuffleDeck
-        (_,newState) = runState shuffleAction cardState
-        newDeck = stateDeck newState
-    return newDeck
 
 testSpecificHands :: IO ()
 testSpecificHands = do
@@ -58,8 +47,8 @@ testSpecificHands = do
         fhHand    = mapMaybe easyConvert ["3S","3C","3D","2D","2H"]
         hand   = flushHand
         result = translateHand hand
-    putStrLn $ show hand
-    putStrLn $ show result
+    print hand
+    print result
 
 easyConvert :: String -> Maybe Card
 easyConvert [val,st] = do

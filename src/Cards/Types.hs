@@ -3,10 +3,10 @@ module Cards.Types where
 import Data.Ord (comparing)
 
 
-data Suit = Spades | Hearts | Clubs | Diamonds 
+data Suit = Spades | Hearts | Clubs | Diamonds
     deriving (Show, Eq, Enum, Bounded, Ord)
 
-data Value = Two | Three | Four | Five | Six | Seven 
+data Value = Two | Three | Four | Five | Six | Seven
     | Eight | Nine | Ten | Jack | Queen | King | Ace
     deriving (Show, Eq, Enum, Bounded, Ord)
 
@@ -19,6 +19,6 @@ instance Ord Card where
     compare = comparing suit <> comparing value
 
 instance Show Card where
-    show (Card {suit = s,value = v}) = (show v) ++ " of " ++ (show s)
+    show (Card {suit = s,value = v}) = show v ++ " of " ++ show s
 
 type Deck = [Card]

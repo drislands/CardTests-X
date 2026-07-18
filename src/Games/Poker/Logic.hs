@@ -3,14 +3,14 @@ module Games.Poker.Logic where
 import Cards.Types
 import Games.Poker.Types
 import Data.List
-import Data.Ord (comparing)
+import Data.Ord (comparing, Down (Down))
 
 -- Gotta be exactly 5. TODO: enforce this?
 translateHand :: [Card] -> Hand
 translateHand inCards =
     let (high, low)  = getHighLow inCards
         (count, val) = getMostValues inCards
-    in if isFlush inCards 
+    in if isFlush inCards
         then if isStraight inCards
             then if high == Ace && low == Ten
                 then RoyalFlush
@@ -33,22 +33,22 @@ translateHand inCards =
             let groups = groupByMost cards
             in if length groups > 3
                 then Pair val (reverse . sortValues $ cards)
-                else 
-                    let [(v1:_),(v2:_),(v3:_)] = groups
-                        highV = maximum [v1,v2]
-                        lowV  = minimum [v1,v2]
+                else
+                    let [v1:_,v2:_,v3:_] = groups
+                        highV = max v1 v2
+                        lowV  = min v1 v2
                     in TwoPair highV lowV v3
 
 sortValues :: [Card] -> [Value]
 sortValues cards = sort $ map value cards
 
 groupByMost :: [Card] -> [[Value]]
-groupByMost = sortBy (flip $ comparing length) . group . sortValues
+groupByMost = sortBy (comparing (Data.Ord.Down . length)) . group . sortValues
 
 getHighLow :: [Card] -> (Value,Value)
 getHighLow cards =
     let sorted = sortValues cards
-        (low:_:_:_:high:[]) = sorted
+        [low, _, _, _, high] = sorted
     in (high,low)
 
 getMostValues :: [Card] -> (Int,Value)

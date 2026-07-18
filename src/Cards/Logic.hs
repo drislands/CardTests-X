@@ -17,4 +17,4 @@ shuffleDeck' [] xs = xs
 shuffleDeck' _ [] = []
 shuffleDeck' (i:is) xs =
     let (front,back) = splitAt (i `mod` length xs) xs
-    in  (head back) : shuffleDeck' is (front ++ tail back)
+    in  head back : shuffleDeck' is (front ++ tail back)
