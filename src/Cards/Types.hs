@@ -4,11 +4,11 @@ import Data.Ord (comparing)
 
 
 data Suit = Spades | Hearts | Clubs | Diamonds 
-    deriving (Show, Eq, Enum, Bounded,Ord)
+    deriving (Show, Eq, Enum, Bounded, Ord)
 
-data Value = Ace | Two | Three | Four | Five | Six | Seven 
-    | Eight | Nine | Ten | Jack | Queen | King 
-    deriving (Show, Eq, Enum, Bounded,Ord)
+data Value = Two | Three | Four | Five | Six | Seven 
+    | Eight | Nine | Ten | Jack | Queen | King | Ace
+    deriving (Show, Eq, Enum, Bounded, Ord)
 
 data Card = Card
     { suit  :: Suit

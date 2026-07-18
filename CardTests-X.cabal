@@ -12,6 +12,8 @@ executable cardgame
     other-modules:      Cards.Types
                         Cards.Logic
                         Cards.Monads
+                        Games.Poker.Types
+                        Games.Poker.Logic
     
     hs-source-dirs:     src
 
