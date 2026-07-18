@@ -17,7 +17,7 @@ main = do
     let fresh = freshDeck
 
     systemGen <- newStdGen
-    let cardState = CardState { stateGen = systemGen, stateDeck = fresh }
+    let cardState = CardState { stateGen = systemGen, stateDeck = fresh, stateDiscard = [] }
         drawAction :: CardMonad [Card]
         drawAction = do
             shuffleDeck
