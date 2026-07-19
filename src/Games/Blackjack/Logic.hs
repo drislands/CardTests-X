@@ -3,6 +3,7 @@ module Games.Blackjack.Logic where
 import Cards.Types
 import Games.Blackjack.Types
 
+
 translateHand :: [Card] -> Hand
 translateHand cards =
     let aceCount = length $ filter ((== Ace) . value) cards
@@ -12,9 +13,10 @@ translateHand cards =
         parseTotal :: Int -> Int -> Hand
         parseTotal n ac
             | n == 21   = Blackjack
-            | n >  21   = if ac < 1 then Bust else parseTotal (n - 10) (ac - 1)
+            | n >  21   = if ac < 1 
+                then Bust 
+                else parseTotal (n - 10) (ac - 1)
             | otherwise = Hand n
-        
 
 translateCard :: Card -> Int
 translateCard card =
@@ -23,4 +25,4 @@ translateCard card =
         King  -> 10
         Queen -> 10
         Jack  -> 10
-        other -> (fromEnum other) + 2
+        other -> fromEnum other + 2
