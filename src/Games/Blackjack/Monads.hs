@@ -2,10 +2,13 @@ module Games.Blackjack.Monads where
 
 import Control.Monad.State
     ( runState, MonadState(put, get), State )
+import Control.Monad.Trans.Maybe (MaybeT(..), runMaybeT)
+import Control.Monad.Trans.Class
 import Data.List
 import Cards.Monads
 import Cards.Types
 import Games.Blackjack.Types
+import Games.Blackjack.Logic (translateHand)
 
 
 data BlackjackState = BlackjackState
@@ -53,14 +56,49 @@ getPlayer pId = do
 -- wasn't already in the list, it will be after this.
 dealPlayerIn :: Player -> Money -> BlackjackMonad Player
 dealPlayerIn player ante = do
-    s <- get
     -- Do some money conversion
     let startingMoney = wallet player
         newMoney      = startingMoney - ante
     hand <- embedCardAction (draw 2)
     -- Define the updated player, and get the rest of the list
     let result = player { wallet = newMoney, wager = ante, playerHand = hand }
-        otherPlayers  = filter ((/= playerId player) . playerId) (statePlayers s)
-    put s { statePlayers = result : otherPlayers }
-
+    updatePlayer result
     return result
+
+updatePlayer :: Player -> BlackjackMonad ()
+updatePlayer player = do
+    s <- get
+    let otherPlayers = filter ((/= playerId player) . playerId) (statePlayers s)
+    put s { statePlayers = player : otherPlayers }
+
+hit :: Int -> BlackjackMonad (Maybe Hand)
+hit pId = runMaybeT $ do
+    p <- MaybeT $ getPlayer pId
+    [nextCard] <- lift $ embedCardAction (draw 1)
+    let newHand = nextCard : playerHand p
+        result = translateHand newHand
+        newPlayer = p { playerHand = newHand }
+    lift $ updatePlayer newPlayer
+    return result
+
+-- Plays a hand until it's either a bust, blackjack, or a 
+-- high enough value to stop.
+autoPlayHand :: [Card] -> Int -> BlackjackMonad Hand
+autoPlayHand cards hardstop
+    | Bust      <- status = return status
+    | Blackjack <- status = return status
+    | Hand v    <- status, v >= hardstop = return status
+    | otherwise = do
+        nextCards <- embedCardAction (draw 1)
+        case nextCards of
+            (nextCard:_) -> autoPlayHand (nextCard : cards) hardstop
+            _ -> return status
+    where
+        status = translateHand cards
+
+playDealer :: BlackjackMonad Hand
+playDealer = do
+    s <- get
+    let hardStop = 17
+        dHand = dealerHand s
+    autoPlayHand dHand hardStop
